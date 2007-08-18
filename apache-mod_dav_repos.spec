@@ -6,7 +6,7 @@
 Summary:	Mod_dav_repos is a DSO module for the apache Web server
 Name:		apache-%{mod_name}
 Version:	0.9.4
-Release:	%mkrel 2
+Release:	%mkrel 3
 Group:		System/Servers
 License:	Apache License 
 URL:		http://catacomb.tigris.org/
@@ -24,11 +24,9 @@ Requires(pre):	apache >= 2.2.0
 Requires:	apache-conf >= 2.2.0
 Requires:	apache >= 2.2.0
 Requires:	apache-mod_dav
-BuildRequires:	MySQL-devel
+BuildRequires:	mysql-devel
 BuildRequires:	apache-devel >= 2.2.0
 BuildRequires:	file
-Provides:	apache2-mod_dav_repos
-Obsoletes:	apache2-mod_dav_repos
 Epoch:		1
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 
@@ -101,9 +99,6 @@ install -d %{buildroot}%{_sysconfdir}/httpd/modules.d
 install -m0755 .libs/*.so %{buildroot}%{_libdir}/apache-extramodules/
 install -m0644 %{mod_conf} %{buildroot}%{_sysconfdir}/httpd/modules.d/%{mod_conf}
 
-install -d %{buildroot}%{_var}/www/html/addon-modules
-ln -s ../../../..%{_docdir}/%{name}-%{version} %{buildroot}%{_var}/www/html/addon-modules/%{name}-%{version}
-
 %post
 if [ -f %{_var}/lock/subsys/httpd ]; then
     %{_initrddir}/httpd restart 1>&2;
@@ -124,6 +119,3 @@ fi
 %doc README TODO data.sql table.sql catacomb_HOWTO.html
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/httpd/modules.d/%{mod_conf}
 %attr(0755,root,root) %{_libdir}/apache-extramodules/%{mod_so}
-%{_var}/www/html/addon-modules/*
-
-
