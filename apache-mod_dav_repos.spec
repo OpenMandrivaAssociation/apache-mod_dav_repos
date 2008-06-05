@@ -28,7 +28,7 @@ BuildRequires:	mysql-devel
 BuildRequires:	apache-devel >= 2.2.0
 BuildRequires:	file
 Epoch:		1
-BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Catacomb is a WebDAV repository module for use with the Apache WebDAV module,
