@@ -5,8 +5,8 @@
 
 Summary:	DSO module for the apache Web server
 Name:		apache-%{mod_name}
-Version:	0.9.4
-Release:	%mkrel 8
+Version:	0.9.6
+Release:	%mkrel 1
 Group:		System/Servers
 License:	Apache License 
 URL:		http://catacomb.tigris.org/
@@ -14,9 +14,7 @@ Source0:	http://catacomb.tigris.org/catacomb-%{version}.tar.gz
 Source1:	%{mod_conf}
 # wget -rm http://www.webdav.org/catacomb/catacomb_HOWTO.html
 Source2:	catacomb_HOWTO.html
-Patch0:		catacomb-0.8.0-compilefixer.patch
 Patch1:		catacomb-0.9.2-version.diff
-Patch2:		catacomb-0.9.0-gcc4.patch
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 Requires(pre):	apache-conf >= 2.2.0
@@ -24,7 +22,6 @@ Requires(pre):	apache >= 2.2.0
 Requires:	apache-conf >= 2.2.0
 Requires:	apache >= 2.2.0
 Requires:	apache-mod_dav
-BuildRequires:	mysql-devel
 BuildRequires:	apache-devel >= 2.2.0
 BuildRequires:	file
 Epoch:		1
@@ -59,9 +56,7 @@ protocol.
 %prep
 
 %setup -q -n catacomb-%{version}
-%patch0 -p1
 %patch1 -p1
-%patch2 -p0
 
 cp %{SOURCE1} %{mod_conf}
 cp %{SOURCE2} catacomb_HOWTO.html
@@ -71,27 +66,24 @@ find . -type f|xargs file|grep 'CRLF'|cut -d: -f1|xargs perl -p -i -e 's/\r//'
 find . -type f|xargs file|grep 'text'|cut -d: -f1|xargs perl -p -i -e 's/\r//'
 
 # lib64 fixes
-perl -pi -e "s|/lib|/%{_lib}|g" Makefile*
+perl -pi -e "s|/lib\b|/%{_lib}|g" Makefile*
+
+perl -pi -e "s|/bin/apxs|/sbin/apxs|g" configure*
 
 %build
 rm -f configure
 autoconf
 
 %configure \
-    --with-apache=%{_prefix} \
-    --with-mysql=%{_prefix}
+    --with-apache=%{_prefix}
 
-#%%make
-
-%{_sbindir}/apxs -I%{_includedir}/mysql -Wl,-lmysqlclient \
-    -c mod_dav_repos.c repos.c props.c search.c \
-    dbms.c util.c lock.c version.c dbms_mysql.c 
+%{_sbindir}/apxs -c mod_dav_repos.c dbms.c lock.c props.c repos.c search.c util.c version.c
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 # fix strange permissions
-chmod 644 README TODO data.sql table.sql catacomb_HOWTO.html
+chmod 644 README TODO catacomb_HOWTO.html data.sql table_pgsql.sql table_psql.sql table.sql
 
 install -d %{buildroot}%{_libdir}/apache-extramodules
 install -d %{buildroot}%{_sysconfdir}/httpd/modules.d
@@ -112,10 +104,10 @@ if [ "$1" = "0" ]; then
 fi
 
 %clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc README TODO data.sql table.sql catacomb_HOWTO.html
+%doc README TODO catacomb_HOWTO.html data.sql table_pgsql.sql table_psql.sql table.sql
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/httpd/modules.d/%{mod_conf}
 %attr(0755,root,root) %{_libdir}/apache-extramodules/%{mod_so}
