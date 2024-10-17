@@ -9,7 +9,7 @@ Version:	0.9.6
 Release:	%mkrel 7
 Group:		System/Servers
 License:	Apache License 
-URL:		http://catacomb.tigris.org/
+URL:		https://catacomb.tigris.org/
 Source0:	http://catacomb.tigris.org/catacomb-%{version}.tar.gz
 Source1:	%{mod_conf}
 # wget -rm http://www.webdav.org/catacomb/catacomb_HOWTO.html
