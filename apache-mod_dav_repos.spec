@@ -6,7 +6,7 @@
 Summary:	DSO module for the apache Web server
 Name:		apache-%{mod_name}
 Version:	0.9.6
-Release:	%mkrel 7
+Release:	8
 Group:		System/Servers
 License:	Apache License 
 URL:		https://catacomb.tigris.org/
